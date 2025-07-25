@@ -1,45 +1,56 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/ui/app-sidebar"
-import { HeroSection } from "@/components/hero/hero-section"
-import { PetSitterMap } from "@/components/map/pet-sitter-map"
+import { useState } from "react";
+import { AllergyInput } from "@/components/allergy/allergy-input";
+import { MenuScanner } from "@/components/menu/menu-scanner";
+import { DishAnalysis } from "@/components/analysis/dish-analysis";
+import { Card } from "@/components/ui/card";
+import type { Allergy, Dish } from "@/types/allergy";
 
 const Index = () => {
+  const [allergies, setAllergies] = useState<Allergy[]>([]);
+  const [analyzedDishes, setAnalyzedDishes] = useState<Dish[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="h-16 border-b border-border flex items-center px-6 bg-white/50 backdrop-blur-sm">
-            <SidebarTrigger />
-          </header>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+            AllergyGuard
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Safe dining made simple. Input your allergies, scan any menu, and get instant recommendations on what to avoid.
+          </p>
+        </div>
 
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            <div className="container mx-auto px-6 py-8">
-              {/* Hero Section */}
-              <section className="mb-12">
-                <HeroSection />
-              </section>
+        <div className="grid gap-8 max-w-4xl mx-auto">
+          {/* Step 1: Allergy Input */}
+          <Card className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">Step 1: Your Allergies</h2>
+            <AllergyInput allergies={allergies} setAllergies={setAllergies} />
+          </Card>
 
-              {/* Map Section */}
-              <section>
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold mb-2">Pet Sitters Near You</h2>
-                  <p className="text-muted-foreground">
-                    Explore verified pet sitters in your area. Click on map markers to see detailed profiles.
-                  </p>
-                </div>
-                <div className="h-[500px] lg:h-[600px]">
-                  <PetSitterMap />
-                </div>
-              </section>
-            </div>
-          </main>
+          {/* Step 2: Menu Scanner */}
+          {allergies.length > 0 && (
+            <Card className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Step 2: Scan Menu</h2>
+              <MenuScanner 
+                allergies={allergies}
+                onAnalysisComplete={setAnalyzedDishes}
+                setIsAnalyzing={setIsAnalyzing}
+              />
+            </Card>
+          )}
+
+          {/* Step 3: Results */}
+          {analyzedDishes.length > 0 && (
+            <Card className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Step 3: Recommendations</h2>
+              <DishAnalysis dishes={analyzedDishes} isAnalyzing={isAnalyzing} />
+            </Card>
+          )}
         </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
