@@ -1,5 +1,3 @@
-s# Welcome to your personal Petsitter Platform
-
 ## Project info
 Enjoy your free time without feeling guilty, both of you!
 Find a trustworthy caregiver for your pet near you, that feels like home! 
